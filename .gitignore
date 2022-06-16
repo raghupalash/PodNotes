@@ -1,0 +1,5 @@
+credentials.py
+db.sqlite3
+.spotify_caches/
+podserver/__pycache__/
+PodNotes/__pycache__/
