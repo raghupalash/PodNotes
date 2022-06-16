@@ -1,11 +1,13 @@
 import os
 import uuid
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from .utils import session_cache_path
 from .credentials import client_id, client_secret
+
+import pprint
 
 os.environ["SPOTIPY_CLIENT_ID"] = client_id
 os.environ["SPOTIPY_CLIENT_SECRET"] = client_secret
@@ -43,6 +45,17 @@ def index(request):
     # Step 4. Signed in, display data
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
-    print(spotify.current_user())
     return render(request, "podserver/app.html")
+
+def search(request, query):
+    # Check if logged in
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        return redirect("/")
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    search_res = spotify.search(query, limit=1, offset=0, type="show,episode")
+    return JsonResponse(search_res)
+
+
     
