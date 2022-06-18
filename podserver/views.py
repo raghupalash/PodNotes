@@ -1,4 +1,5 @@
 import os
+from telnetlib import STATUS
 import uuid
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
@@ -56,6 +57,31 @@ def search(request, query):
     spotify = spotipy.Spotify(auth_manager=auth_manager)
     search_res = spotify.search(query, limit=1, offset=0, type="show,episode")
     return JsonResponse(search_res)
+
+def media(request, query):
+    # Check if logged in
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        return redirect("/")
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+
+    if query not in ["pause", "play", "skip15"]:
+        return HttpResponse("Wrong query, use 'pause', 'play' or 'skip15'", status=400)
+    
+    try:
+        if query == "pause":
+            spotify.pause_playback()
+        elif query == "play":
+            spotify.start_playback()
+        else:
+            pos = spotify.current_playback()
+
+            spotify.seek_track(pos["progress_ms"] + 15000)
+    except:
+        return HttpResponse("An unknown error occured", status=400)
+
+    return HttpResponse("ok")
 
 
     
