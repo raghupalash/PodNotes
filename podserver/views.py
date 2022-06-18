@@ -83,9 +83,8 @@ def media(request, query):
         elif query == "play":
             spotify.start_playback()
         else:
-            pos = spotify.current_playback()
-
-            spotify.seek_track(pos["progress_ms"] + 15000)
+            current = spotify.current_playback(additional_types="episode")
+            spotify.seek_track(current["progress_ms"] + 15000)
     except:
         return HttpResponse("An unknown error occured", status=400)
 
@@ -135,7 +134,7 @@ def note(request):
         note.save()
         
         return HttpResponse("ok")
-        
+
 
 def testNote(request):
     c = Client()
