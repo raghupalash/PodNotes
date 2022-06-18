@@ -83,5 +83,19 @@ def media(request, query):
 
     return HttpResponse("ok")
 
+def currentPos(request):
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        return redirect("/")
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+
+    try:
+        pos = spotify.current_playback()["progress_ms"]
+    except:
+        return HttpResponse("An unkown error occured", status=500)
+
+    return JsonResponse({"currentPos": pos})
+
 
     

@@ -5,4 +5,5 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("search/<str:query>", views.search, name="search"),
     path("media/<str:query>", views.media, name="media"),
+    path("currentPos", views.currentPos, name="currentPos"),
 ]
