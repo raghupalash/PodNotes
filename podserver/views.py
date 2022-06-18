@@ -8,6 +8,10 @@ from spotipy.oauth2 import SpotifyOAuth
 from .utils import session_cache_path
 from .credentials import client_id, client_secret
 
+from .models import Entry, Note, User
+
+# Test imports
+from django.test import Client
 import pprint
 
 os.environ["SPOTIPY_CLIENT_ID"] = client_id
@@ -46,6 +50,10 @@ def index(request):
     # Step 4. Signed in, display data
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
+    
+    current_user = spotify.current_user()
+    user = User(user_spotify_id=current_user["id"], username=current_user["display_name"])
+    user.save()
     return render(request, "podserver/app.html")
 
 def search(request, query):
@@ -96,6 +104,47 @@ def currentPos(request):
         return HttpResponse("An unkown error occured", status=500)
 
     return JsonResponse({"currentPos": pos})
+
+def note(request):
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        return redirect("/")
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+
+    if request.method == "POST":
+        if not request.POST.get("time") or not request.POST.get("text"):
+            return HttpResponse("Time or Note not provided.", status=400)
+        
+        time = str(request.POST["time"])
+        text = str(request.POST["text"])
+
+        user = User.objects.get(user_spotify_id=spotify.current_user()["id"])
+
+        # Get the current playing podcast info
+        podcast = spotify.current_playback(additional_types="episode")
+
+        # Search db for that podcast and user id
+        entry = Entry.objects.filter(podcast_id=podcast["item"]["id"], user=user)
+        if len(entry) == 0:
+            entry = Entry(podcast_id=podcast["item"]["id"], user=user)
+            entry.save()
+
+        # if not present then create an entry, add it to user and then make note
+        note = Note(time=time, text=text, entry=entry)
+        note.save()
+        
+        return HttpResponse("ok")
+        
+
+def testNote(request):
+    c = Client()
+    session = c.session
+    session["uuid"] = "044f301e-7db1-4b2b-8ddb-2c050585bd5b"
+    session.save()
+    data = dict(time="123455", text="hellow world!")
+    res = c.post("/addNote", data=data)
+    return HttpResponse(res)
 
 
     
