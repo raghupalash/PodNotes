@@ -7,6 +7,6 @@ urlpatterns = [
     path("media/<str:query>", views.media, name="media"),
     path("currentPos", views.currentPos, name="currentPos"),
     path("addNote", views.note, name="addNote"),
-    path("test", views.test),
+    path("entries", views.entry, name="entry"),
     path("testNote", views.testNote),
 ]

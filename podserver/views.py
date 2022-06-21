@@ -140,11 +140,27 @@ def note(request):
         
         return HttpResponse("ok")
 
+def entry(request):
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        return redirect("/")
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+
+    user_id = spotify.current_user()["id"]
+    entries = Entry.objects.filter(user__user_spotify_id=user_id)
+    if not len(entries):
+        return HttpResponse("No entries found.", status=404)
+    episode_ids = [entry.podcast_id for entry in entries]
+    episodes = spotify.episodes(episode_ids)
+
+    return JsonResponse(episodes)
+
 
 def testNote(request):
     c = Client()
     session = c.session
-    session["uuid"] = "044f301e-7db1-4b2b-8ddb-2c050585bd5b"
+    session["uuid"] = "5d61cf46-6f53-44c8-9e81-467e54320f01"
     session.save()
     data = dict(time="123455", text="hellow world!")
     res = c.post("/addNote", data=data)
