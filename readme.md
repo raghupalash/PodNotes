@@ -57,3 +57,30 @@ A json object will be returned with following hierarchy -
        - description
        - uri
 
+## Entries
+All podcasts user listened too and made notes on)
+
+`/entries` - GET.
+
+Reponse -
+
+- episodes: array of objects (where each object contains):
+    - description
+    - id
+    - images (array of objects)
+       - url
+       - height
+       - width
+   - name
+
+## Notes
+
+`/notes` - GET.
+
+Called when user is at the podcast view, i.e., the screen that comes after they clicked on an podcast/entry.
+The podcast starts playing, which the user can stop, and below should appear a list of their notes.
+
+Response -
+
+- an array of objects like -
+    "time": "text"

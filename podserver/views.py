@@ -157,6 +157,27 @@ def entry(request):
     return JsonResponse(episodes)
 
 
+def getNotes(request):
+    # Clicking on an entry starts playing the podcast, which the user can pause
+    cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
+    auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
+    if not auth_manager.validate_token(cache_handler.get_cached_token()):
+        return redirect("/")
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+
+    user_id = spotify.current_user()["id"]
+    podcast = spotify.current_playback(additional_types="episode")
+    print(podcast["item"]["name"])
+    entry = Entry.objects.filter(podcast_id=podcast["item"]["id"], user__user_spotify_id=user_id).first()
+    notes = Note.objects.filter(entry=entry)
+    res = {}
+    for note in notes:
+        res[note.time] = note.text
+    
+    return JsonResponse(res) # If empty, no notes exist
+    
+
+
 def testNote(request):
     c = Client()
     session = c.session
