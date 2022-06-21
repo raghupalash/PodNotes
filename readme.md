@@ -37,7 +37,7 @@ Depending on the action chosen, the Spotify player on the Spotify app will play,
 
 user_query will be the string inputed by the user.
 
-**Return**:
+**Response**:
 
 A json object will be returned with following hierarchy -
 
@@ -58,11 +58,12 @@ A json object will be returned with following hierarchy -
        - uri
 
 ## Entries
-All podcasts user listened too and made notes on)
 
 `/entries` - GET.
 
-Reponse -
+Purpose: To show users the podcasts they made some notes on.
+
+**Response** -
 
 - episodes: array of objects (where each object contains):
     - description
@@ -77,10 +78,10 @@ Reponse -
 
 `/notes` - GET.
 
-Called when user is at the podcast view, i.e., the screen that comes after they clicked on an podcast/entry.
+Purpose: Called when user is at the podcast view, i.e., the screen that comes after they clicked on an podcast/entry.
 The podcast starts playing, which the user can stop, and below should appear a list of their notes.
 
-Response -
+**Response** -
 
 - an array of objects like -
     "time": "text"
