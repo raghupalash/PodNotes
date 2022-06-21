@@ -107,7 +107,7 @@ def currentPos(request):
 
     return JsonResponse({"currentPos": pos})
 
-def note(request):
+def addNote(request):
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
