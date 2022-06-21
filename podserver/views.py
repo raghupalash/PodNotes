@@ -125,6 +125,8 @@ def note(request):
 
         # Get the current playing podcast info
         podcast = spotify.current_playback(additional_types="episode")
+        if podcast["item"]["type"] == "track":
+            return HttpResponse("You are not listening to a podcast, are you?", status=400)
 
         # Search db for that podcast and user id
         entry = Entry.objects.filter(podcast_id=podcast["item"]["id"], user=user)
