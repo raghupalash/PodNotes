@@ -52,8 +52,10 @@ def index(request):
 
     
     current_user = spotify.current_user()
-    user = User(user_spotify_id=current_user["id"], username=current_user["display_name"])
-    user.save()
+    user = User.objects.filter(user_spotify_id=current_user["id"])
+    if not len(user):
+        user = User(user_spotify_id=current_user["id"], username=current_user["display_name"])
+        user.save()
     return render(request, "podserver/app.html")
 
 def search(request):
