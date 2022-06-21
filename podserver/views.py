@@ -56,12 +56,13 @@ def index(request):
     user.save()
     return render(request, "podserver/app.html")
 
-def search(request, query):
+def search(request):
     # Check if logged in
     cache_handler = spotipy.cache_handler.CacheFileHandler(cache_path=session_cache_path(request))
     auth_manager = spotipy.oauth2.SpotifyOAuth(cache_handler=cache_handler)
     if not auth_manager.validate_token(cache_handler.get_cached_token()):
         return redirect("/")
+    query = request.GET["query"]
     spotify = spotipy.Spotify(auth_manager=auth_manager)
     search_res = spotify.search(query, limit=1, offset=0, type="show,episode")
     return JsonResponse(search_res)
