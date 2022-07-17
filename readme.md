@@ -52,6 +52,9 @@ action should be one of these -
 
 Depending on the action chosen, the Spotify player on the Spotify app will play, pause or skip forwards by 15 seconds.
 
+**Note** - In case of action = play, you can provide also provide a query:
+`/media/play?uri=`
+
 
 ### Search
 
@@ -78,6 +81,9 @@ A json object will be returned with following hierarchy -
        - images
        - description
        - uri
+
+**Note** - Search results should be displayed as hyperlinks where each result
+is a hyperlink pointing to `.../media/play?uri={uri}`.
 
 ### Entries
 

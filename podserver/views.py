@@ -77,6 +77,8 @@ def media(request, query):
         return redirect("/")
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
+    playbackURI = request.GET.get("uri")
+
     if query not in ["pause", "play", "skip15"]:
         return HttpResponse("Wrong query, use 'pause', 'play' or 'skip15'", status=400)
     
@@ -84,7 +86,7 @@ def media(request, query):
         if query == "pause":
             spotify.pause_playback()
         elif query == "play":
-            spotify.start_playback()
+            spotify.start_playback(context_uri=playbackURI)
         else:
             current = spotify.current_playback(additional_types="episode")
             spotify.seek_track(current["progress_ms"] + 15000)
