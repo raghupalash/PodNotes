@@ -5,10 +5,18 @@ To install all the python requirements of this project:
 pip install requirements.txt
 ```
 To run the server:
-```py
+```
 python manage.py makemigrations
 python manage.py migrate
-# and then
+python manage.py runserver
+```
+
+## Update Frontend
+The Django server loads the index.html template in the build folder. So having a build folder is necessary.
+```
+cd frontend
+npm run build
+cd ..
 python manage.py runserver
 ```
 

@@ -56,7 +56,7 @@ def index(request):
     if not len(user):
         user = User(user_spotify_id=current_user["id"], username=current_user["display_name"])
         user.save()
-    return render(request, "podserver/app.html")
+    return render(request, "index.html")
 
 def search(request):
     # Check if logged in
