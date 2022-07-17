@@ -1,6 +1,20 @@
-# API Documentation
+## Installation
+To install all the python requirements of this project:
 
-## Note Creation and Saving.
+```
+pip install requirements.txt
+```
+To run the server:
+```py
+python manage.py makemigrations
+python manage.py migrate
+# and then
+python manage.py runserver
+```
+
+## API Documentation
+
+### Note Creation and Saving.
 
 `/currentPos` - **GET**
 
@@ -16,7 +30,7 @@ Data - A JSON object with two keys and their respective values:
 Headers would need to contain a CSRF cookie, it's not a priority to have it right now, so I think I might bypass it as of now.
 
 
-## Media Player controls.
+### Media Player controls.
 
 `/media/<action>` - **PUT**
 
@@ -31,7 +45,7 @@ action should be one of these -
 Depending on the action chosen, the Spotify player on the Spotify app will play, pause or skip forwards by 15 seconds.
 
 
-## Search
+### Search
 
 `/search?query=<user_query>` - **GET**
 
@@ -57,7 +71,7 @@ A json object will be returned with following hierarchy -
        - description
        - uri
 
-## Entries
+### Entries
 
 `/entries` - GET.
 
@@ -74,7 +88,7 @@ Purpose: To show users the podcasts they made some notes on.
        - width
    - name
 
-## Notes
+### Notes
 
 `/notes` - GET.
 
